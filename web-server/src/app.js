@@ -7,6 +7,8 @@ const forecast = require('./utils/forecast')
 
 const app = express()
 
+const port = process.env.PORT || 3000
+
 // Define paths for express config
 const publicDirectoryPath = path.join(__dirname, '../public')
 const viewsPath = path.join(__dirname, '../templates/views')
@@ -56,7 +58,7 @@ app.get('/weather', (req, res) => {
             })
         }
 
-        forecast(latitude, longitude, (error, { summary, temperature, precipProbability }) => {
+        forecast(latitude, longitude, (error, { summary, temperature, high, low, precipProbability }) => {
             if(error) {
                 return res.send({
                     error
@@ -65,7 +67,9 @@ app.get('/weather', (req, res) => {
             
             res.send({
                 location: location,
-                forecast: summary + ' It is currently ' + temperature + ' degrees out. There is a ' + precipProbability + '% chance of rain',
+                forecast: summary + ' It is currently ' + temperature + ' degrees out. ' +
+                        'The high will be ' + high + ' and the low ' + low +
+                        ' There is a ' + precipProbability + '% chance of rain',
                 address: req.query.address
             })
         
@@ -101,6 +105,6 @@ app.get('*', (req, res) => {
     })
 })
 
-app.listen(3000, () => {
-    console.log('Server is up on port 3000')
+app.listen(port, () => {
+    console.log('Server is up on port:' + port)
 })
